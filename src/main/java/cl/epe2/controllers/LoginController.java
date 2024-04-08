@@ -15,18 +15,19 @@ import cl.epe2.services.IAuthService;
 @CrossOrigin(origins = "*")
 public class LoginController {
 	@Autowired
-    private IAuthService iAuthService;
+	private IAuthService iAuthService;
 
-    @PostMapping("/api/login")
-    public ResponseEntity<String> login(@RequestBody User user) {
-        
-        if (iAuthService.userAuthenticate(user.getUsername(), user.getPassword())) {
-            System.out.println("login exitoso");
-            return ResponseEntity.ok().body("{\"username\": \"" + user.getUsername() + "\"}");
-        } else {
-        	System.out.println("login invalido");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
-            
-        }
-    }
+	@PostMapping("/api/login")
+	public ResponseEntity<?> login(@RequestBody User user) {
+
+		if (iAuthService.userAuthenticate(user.getUsername(), user.getPassword())) {
+			System.out.println("login exitoso");
+			User authenticatedUser = iAuthService.getAuthenticatedUser(user.getUsername());			
+			return ResponseEntity.ok().body(authenticatedUser);
+		} else {
+			System.out.println("login invalido");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales inválidas");
+
+		}
+	}
 }

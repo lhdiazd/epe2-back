@@ -1,5 +1,7 @@
 package cl.epe2.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,19 @@ public class AuthServiceImpl implements IAuthService{
         } else {
             return false; 
         }
+	}
+
+	@Override
+	public User getAuthenticatedUser(String username) {
+		
+		return userRepository.findByUsername(username);
+	}
+	
+	
+	@Override
+	public User getAuthenticatedUserById(Long userId) {
+		Optional<User> userOptional = userRepository.findById(userId);
+		return userOptional.orElse(null);
 	}
 
 }
