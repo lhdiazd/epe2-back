@@ -44,31 +44,39 @@ public class PurchaseController {
 	@PostMapping("/save")
 	public ResponseEntity<?> savePurchase(@RequestParam Long userId, @RequestBody List<Product> products) {
 		Purchase purchase = new Purchase();
+		
 		purchase.setUser(iAuthService.getAuthenticatedUserById(userId));
-
-		// Guardar la compra en la base de datos
-		Purchase savedPurchase = iPurchaseService.savePurchase(purchase); // Guardar el Purchase primero
-
-		// Crear PurchaseItem para cada producto y añadirlo a la lista de items
+		
+		Purchase savedPurchase = iPurchaseService.savePurchase(purchase); 
+		
 		Set<PurchaseItem> items = new HashSet<>();
+		
 		for (Product product : products) {
+			
 			PurchaseItem item = new PurchaseItem();
+			
 			item.setProduct(product);
-			item.setPurchase(savedPurchase); // Establece la relación con la compra guardada
-			PurchaseItem savedItem = iPurchaseItemService.savePurchaseItem(item); // Guardar el PurchaseItem
-			items.add(savedItem); // Agregar el PurchaseItem guardado a la lista de items
+			
+			item.setPurchase(savedPurchase); 
+			
+			PurchaseItem savedItem = iPurchaseItemService.savePurchaseItem(item); 
+			
+			items.add(savedItem);
+			
 			System.out.println(savedItem.getProduct().getName());
 		}
-		savedPurchase.setItems(items); // Establecer la lista de items en el Purchase guardado
-
-		// Guardar la compra actualizada en la base de datos
+		savedPurchase.setItems(items);
+		
 		Purchase updatedPurchase = iPurchaseService.savePurchase(savedPurchase);
+		
 		return new ResponseEntity<>(updatedPurchase, HttpStatus.CREATED);
 	}
 
 	@GetMapping("/history/{userId}")
 	public ResponseEntity<List<Purchase>> getPurchaseByUserId(@PathVariable Long userId) {
+		
 		List<Purchase> purchases = iPurchaseService.getByUserId(userId);
+		
 		return new ResponseEntity<>(purchases, HttpStatus.OK);
 	}
 
